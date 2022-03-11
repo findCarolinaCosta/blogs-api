@@ -23,12 +23,12 @@ module.exports = {
             model: 'Users',
             key: 'id',
         },
-        published: {
-          type: Sequelize.DATE
-        },
-        updated: {
-          type: Sequelize.DATE
-        }
+      },
+      published: {
+        type: Sequelize.DATE
+      },
+      updated: {
+        type: Sequelize.DATE
       }
     });
   },
