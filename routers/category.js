@@ -10,4 +10,6 @@ router.post(
   controller.createTag,
 );
 
+router.get('/', controller.getCategories);
+
 module.exports = router;
