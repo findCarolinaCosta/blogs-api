@@ -12,4 +12,6 @@ router.post(
 
 router.get('/', controller.getAll);
 
+router.get('/:id', controller.getByUserId);
+
 module.exports = router;
