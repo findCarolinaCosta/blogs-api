@@ -1,7 +1,8 @@
+const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const jwtGenerator = require('../helpers/jwtGenerator');
 
-// fonte base: monitoria 24.5 com o Gaspar
+// fonte base usado na função create: monitoria 24.5 com o Gaspar
 // https://github.dev/tryber/sd-015-b-live-lectures/tree/monitoria/24.5
 const create = async (req, res, next) => {
   try {
@@ -20,6 +21,29 @@ const create = async (req, res, next) => {
   }
 };
 
+const getAll = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token not found' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET);
+
+    const users = await User.findAll();
+
+    return res.status(200).json(users);
+  } catch (error) {
+    if (error.message) {
+      error.status = 401;
+      error.message = 'Expired or invalid token';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   create,
+  getAll,
 };
