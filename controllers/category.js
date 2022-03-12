@@ -25,6 +25,29 @@ const createTag = async (req, res, next) => {
   }
 };
 
+const getCategories = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token not found' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET);
+
+    const tags = await Category.findAll();
+
+    return res.status(200).json(tags);
+  } catch (error) {
+    if (error.message) {
+      error.status = 401;
+      error.message = 'Expired or invalid token';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createTag,
+  getCategories,
 };
