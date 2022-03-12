@@ -13,6 +13,7 @@ app.get('/', (_req, res) => res.send('OK'));
 app.use(bodyParser.json());
 
 app.use('/user', routes.userRouter);
+app.use('/login', routes.loginRouter);
 
 app.use(middleware.handleError);
 
