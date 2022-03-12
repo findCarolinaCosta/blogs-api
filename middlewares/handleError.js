@@ -3,17 +3,16 @@
 
 module.exports = (error, _req, res, _next) => {
   console.error(error);
+  const err = error;
 
-  // erro no email dipara RangeError status por usar schema do regex(/\S+@\S+\.\S+/):
-  // "email" with value "@gmail.com" fails to match the required pattern: /\\S+@\\S+\\.\\S+/'
- // "email" with value "rubinho" fails to match the required pattern: /\\S+@\\S+\\.\\S+/
   if (error.status.includes('"email" with value')) {
     return res.status(400).json({ message: '"email" must be a valid email' });
   }
 
- if (error instanceof SyntaxError && error.message.includes('Unexpected string in JSON')) {
-    return res.status(400).json({ message: 'Invalid body syntax' });
+  if (error.status.includes('is not allowed to be empty')) {
+    err.message = error.status;
+    err.status = 400; 
   }
 
-  return res.status(error.status || 500).json({ message: error.message });
+  return res.status(err.status || 500).json({ message: err.message });
 };
