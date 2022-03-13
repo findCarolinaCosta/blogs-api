@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-module.exports = Joi.object({
+const createSchema = Joi.object({
   title: Joi.string().min(1).required().messages({
     // status code | message 
     'any.required': '400|"title" is required',
@@ -16,3 +16,7 @@ module.exports = Joi.object({
     'any.required': '400|"categoryIds" is required',
   }),
 });
+
+module.exports = {
+  createSchema,
+};

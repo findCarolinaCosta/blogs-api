@@ -1,8 +1,8 @@
-const userSchema = require('../schemas/post');
+const { createSchema } = require('../schemas/post');
 
- const validatePost = (req, _res, next) => {
+ const postCreationValidation = (req, _res, next) => {
    try {
-   const { error } = userSchema.validate(req.body);
+   const { error } = createSchema.validate(req.body);
       
    if (error) {
       const [code, message] = error.message.split('|');
@@ -17,5 +17,5 @@ const userSchema = require('../schemas/post');
 };
 
 module.exports = {
-  validatePost,
+  postCreationValidation,
 };

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post(
   '/',
-  middleware.validatePost,
+  middleware.postCreationValidation,
   middleware.validateToken,
   controller.createPost,
 );
