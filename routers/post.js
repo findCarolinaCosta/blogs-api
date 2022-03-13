@@ -11,4 +11,9 @@ router.post(
   controller.createPost,
 );
 
+router.get(
+  '/', 
+  middleware.validateToken,
+  );
+
 module.exports = router;
