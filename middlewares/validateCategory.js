@@ -3,7 +3,6 @@ const categorySchema = require('../schemas/category');
  const validateCategory = (req, _res, next) => {
    try {
      const { error } = categorySchema.validate(req.body);
-     console.log(req.body);
       
    if (error) {
       const [code, message] = error.message.split('|');
