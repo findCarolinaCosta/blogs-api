@@ -1,10 +1,7 @@
-const { create } = require('./user');
+const { create, getAll, getByUserId } = require('./user');
 const { login } = require('./login');
-const { getAll } = require('./user');
-const { getByUserId } = require('./user');
-const { createTag } = require('./category');
-const { getCategories } = require('./category');
-const { createPost } = require('./post');
+const { createTag, getCategories } = require('./category');
+const { createPost, getPosts } = require('./post');
 
 module.exports.create = create;
 module.exports.login = login;
