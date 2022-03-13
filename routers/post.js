@@ -15,6 +15,11 @@ router.get(
   '/', 
   middleware.validateToken,
   controller.getPosts,
-  );
+);
+
+router.get(
+  '/:id', 
+  middleware.validateToken,
+);
 
 module.exports = router;
