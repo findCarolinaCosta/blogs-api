@@ -1,7 +1,22 @@
+const { DataTypes } = require('sequelize');
+
+const Attributes = {
+  postId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+  },
+  categoryId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+  },
+};
+
 module.exports = (sequelize) => {
-  const PostCategory = sequelize.define('PostsCategory', {},
+  const PostCategory = sequelize.define('PostsCategory',
+    Attributes,
     {
-      underscored: true,
       timestamps: false,
       tableName: 'PostsCategories',
     });
