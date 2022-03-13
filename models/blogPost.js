@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
 
 const Attributes = {
   id: {
@@ -9,16 +10,19 @@ const Attributes = {
   },
   title: {
     type: DataTypes.STRING,
-    unique: true,
+    allowNull: false,
+  },
+  content: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
   published: {
     type: DataTypes.DATE,
-    allowNull: false,
+    defaultValue: Sequelize.NOW,
   },
   updated: {
     type: DataTypes.DATE,
-    allowNull: false,
+    defaultValue: Sequelize.NOW,
   },
 };
 
@@ -27,7 +31,6 @@ module.exports = (sequelize) => {
     'BlogPost',
     Attributes,
     {
-      underscored: true,
       timestamps: false,
       tableName: 'BlogPosts',
     },
