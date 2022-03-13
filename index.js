@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use('/user', routes.userRouter);
 app.use('/login', routes.loginRouter);
 app.use('/categories', routes.categoryRouter);
+app.use('/post', routes.postRouter);
 
 app.use(middleware.handleError);
 
