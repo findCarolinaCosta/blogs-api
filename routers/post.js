@@ -20,6 +20,7 @@ router.get(
 router.get(
   '/:id', 
   middleware.validateToken,
+  controller.getPostById,
 );
 
 module.exports = router;
