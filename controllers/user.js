@@ -67,8 +67,19 @@ const getByUserId = async (req, res, next) => {
   }
 };
 
+const destroyUser = async (req, res, next) => {
+  try {
+    await User.destroy({ where: { id: req.decoded } });
+    
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   create,
   getAll,
   getByUserId,
+  destroyUser,
 };

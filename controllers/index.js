@@ -1,4 +1,4 @@
-const { create, getAll, getByUserId } = require('./user');
+const { create, getAll, getByUserId, destroyUser } = require('./user');
 const { login } = require('./login');
 const { createTag, getCategories } = require('./category');
 const { createPost, getPosts, getPostById, updatePost, destroyPost } = require('./post');
@@ -15,4 +15,5 @@ module.exports = {
   getPostById,
   updatePost,
   destroyPost,
+  destroyUser,
 };
