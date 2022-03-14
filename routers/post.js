@@ -27,6 +27,7 @@ router.put(
   '/:id',
   middleware.validateToken,
   middleware.postUpdateValidation,
+  controller.updatePost,
 );
 
 module.exports = router;

@@ -66,8 +66,37 @@ const getPostById = async (req, res, next) => {
   }
 };
 
+const updatePost = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content, categoryIds } = req.body;
+    if (categoryIds) return res.status(400).json({ message: 'Categories cannot be edited' });
+    if (req.decoded !== Number(id)) return res.status(401).json({ message: 'Unauthorized user' });
+
+    await BlogPost.update({ title, content }, { where: { id } });
+
+    let post = await BlogPost.findOne({ where: { id },
+    attributes: ['title', 'content', 'userId'],
+      include: { model: Category, as: 'categories', through: { attributes: [] } } });
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+
+    // { ...post.dataValues, categories: post.dataValues.categories[0].dataValues }; 1ª forma :) 
+    // 2ª gambiara para pegar ambos dataValues do BlogPosts e do categories
+    post = JSON.stringify(post);
+    post = JSON.parse(post);
+
+    return res.status(200).json(post);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createPost,
   getPosts,
   getPostById,
+  updatePost,
 };
