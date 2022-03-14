@@ -94,9 +94,27 @@ const updatePost = async (req, res, next) => {
   }
 };
 
+const destroyPost = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const post = await BlogPost.findOne({ where: { id } });
+    if (!post) return res.status(404).json({ message: 'Post does not exist' });
+    if (req.decoded !== post.dataValues.userId) { 
+      return res.status(401).json({ message: 'Unauthorized user' }); 
+    }
+    
+    await BlogPost.destroy({ where: { id } });
+
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createPost,
   getPosts,
   getPostById,
   updatePost,
+  destroyPost,
 };
