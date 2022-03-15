@@ -10,9 +10,9 @@ router.post(
   controller.create,
 );
 
-router.get('/', controller.getAll);
+router.get('/', middleware.validateToken, controller.getAll);
 
-router.get('/:id', controller.getByUserId);
+router.get('/:id', middleware.validateToken, controller.getByUserId);
 
 router.delete(
   '/:me', 

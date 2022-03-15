@@ -6,10 +6,11 @@ const router = express.Router();
 
 router.post(
   '/',
+  middleware.validateToken,
   middleware.validateCategory,
   controller.createTag,
 );
 
-router.get('/', controller.getCategories);
+router.get('/', middleware.validateToken, controller.getCategories);
 
 module.exports = router;
