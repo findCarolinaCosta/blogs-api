@@ -12,6 +12,12 @@ router.post(
 );
 
 router.get(
+  '/search',
+  middleware.validateToken,
+  controller.getSearchTerm,
+);
+
+router.get(
   '/', 
   middleware.validateToken,
   controller.getPosts,
