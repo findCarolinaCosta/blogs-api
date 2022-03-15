@@ -1,15 +1,10 @@
-const jwtGenerator = require('../helpers/jwtGenerator');
-const { User } = require('../models');
+const User = require('../services/login');
 
 const login = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    
-    const existingEmail = await User.findOne({ where: { email } });
+    const token = await User.login(req.body);
 
-    if (!existingEmail) return res.status(400).json({ message: 'Invalid fields' });
-
-    const token = jwtGenerator({ id: existingEmail.id, email });
+    if (!token) return res.status(400).json({ message: 'Invalid fields' });
 
     return res.status(200).json({ token });
   } catch (error) {

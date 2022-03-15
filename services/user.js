@@ -11,12 +11,12 @@ const create = async (body) => {
 
      const token = jwtGenerator({ id: newUser.id, displayName });
 
-     return token;
+     return { token };
 };
 
 const getAll = async () => User.findAll();
 
-const getByUserId = async (id) => {
+const getByUserId = async ({ id }) => {
     const user = await User.findOne({ where: { id } });
 
     if (!user) return null;
@@ -24,7 +24,7 @@ const getByUserId = async (id) => {
     return user;
 };
 
-const destroyUser = async (id) => User.destroy({ where: { id } });
+const destroyUser = async ({ id }) => User.destroy({ where: { id } });
 
 module.exports = {
   create,

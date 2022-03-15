@@ -1,30 +1,14 @@
-const { Op } = require('sequelize');
-const { BlogPost, Category, PostsCategory, User } = require('../models');
-
-const createCategories = async ({ categoryIds, post }) => Promise.all(
-  categoryIds.map(async (category) => {
-    const categoryCurrent = await Category.findOne({
-      where: { id: category },
-    });
-    if (!categoryCurrent) return true;
-    await PostsCategory.create({ categoryId: category, postId: post.id });
-  }),
-);
+const Post = require('../services/post');
 
 const createPost = async (req, res, next) => {
   try {
-    const { title, content, categoryIds } = req.body;
-
-    const post = await BlogPost.create({ title, content, userId: req.decoded });
+    const post = await Post.createPost({ ...req.body, decoded: req.decoded });
     
-    const listToCheck = await createCategories({ categoryIds, post });
-    const checkItems = listToCheck.some((category) => category);
-    
-    if (checkItems) {
-      return res.status(400).json({ message: '"categoryIds" not found' });
+    if (post === '"categoryIds" not found') {
+      return res.status(400).json({ message: post });
     }
 
-    return res.status(201).json(post.dataValues);
+    return res.status(201).json(post);
   } catch (error) {
     next(error);
   }
@@ -32,13 +16,8 @@ const createPost = async (req, res, next) => {
 
 const getPosts = async (_req, res, next) => {
   try {
-    const posts = await BlogPost.findAll({ 
-      attributes: { exclude: 'userId' },
-      include: [
-        { model: User, as: 'user', attributes: { exclude: ['password'] } }, 
-        { model: Category, as: 'categories', through: { attributes: [] } },
-      ],
-    });
+    const posts = await Post.getPosts();
+
     return res.status(200).json(posts);
   } catch (error) {
     next(error);
@@ -47,15 +26,7 @@ const getPosts = async (_req, res, next) => {
 
 const getPostById = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const post = await BlogPost.findOne({ 
-      where: { id },
-      attributes: { exclude: 'userId' },
-      include: [
-        { model: User, as: 'user', attributes: { exclude: ['password'] } }, 
-        { model: Category, as: 'categories', through: { attributes: [] } },
-      ],
-    });
+    const post = await Post.getPostById(req.params);
 
     if (!post) {
       return res.status(404).json({ message: 'Post does not exist' });
@@ -69,25 +40,20 @@ const getPostById = async (req, res, next) => {
 
 const updatePost = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { title, content, categoryIds } = req.body;
-    if (categoryIds) return res.status(400).json({ message: 'Categories cannot be edited' });
-    if (req.decoded !== Number(id)) return res.status(401).json({ message: 'Unauthorized user' });
+    const post = await Post.updatePost({ 
+      ...req.body, decoded: req.decoded, id: req.params.id });
 
-    await BlogPost.update({ title, content }, { where: { id } });
+    if (post === 'Unauthorized user') {
+      return res.status(401).json({ message: post });
+    }
 
-    let post = await BlogPost.findOne({ where: { id },
-    attributes: ['title', 'content', 'userId'],
-      include: { model: Category, as: 'categories', through: { attributes: [] } } });
+    if (post === 'Categories cannot be edited') { 
+      return res.status(400).json({ message: post }); 
+    }
 
     if (!post) {
       return res.status(404).json({ message: 'Post does not exist' });
     }
-
-    // { ...post.dataValues, categories: post.dataValues.categories[0].dataValues }; 1ª forma :) 
-    // 2ª gambiara para pegar ambos dataValues do BlogPosts e do categories
-    post = JSON.stringify(post);
-    post = JSON.parse(post);
 
     return res.status(200).json(post);
   } catch (error) {
@@ -97,14 +63,12 @@ const updatePost = async (req, res, next) => {
 
 const destroyPost = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const post = await BlogPost.findOne({ where: { id } });
+    const post = await Post.destroyPost({ id: req.params.id, decoded: req.decoded });
+  
     if (!post) return res.status(404).json({ message: 'Post does not exist' });
-    if (req.decoded !== post.dataValues.userId) { 
-      return res.status(401).json({ message: 'Unauthorized user' }); 
+    if (post === 'Unauthorized user') { 
+      return res.status(401).json({ message: post }); 
     }
-    
-    await BlogPost.destroy({ where: { id } });
 
     return res.status(204).end();
   } catch (error) {
@@ -114,17 +78,7 @@ const destroyPost = async (req, res, next) => {
 
 const getSearchTerm = async (req, res, next) => {
   try {
-    const { q } = req.query;
-    console.log('searchTerm:', q);
-    const post = await BlogPost.findAll({ where: { 
-        [Op.or]: 
-          { title: { [Op.like]: `%${q}%` },
-            content: { [Op.like]: `%${q}%` } } },
-      include: [
-        { model: User, as: 'user', attributes: { exclude: ['password'] } }, 
-        { model: Category, as: 'categories', through: { attributes: [] } },
-      ],
-    });
+    const post = await Post.getSearchTerm(req.query.q);
     
     return res.status(200).json(post);
   } catch (error) {

@@ -17,9 +17,9 @@ const createPost = async ({ title, content, categoryIds, decoded }) => {
     const listToCheck = await createCategories({ categoryIds, post });
     const checkItems = listToCheck.some((category) => category);
     
-    if (checkItems) return null;
+    if (checkItems) return '"categoryIds" not found';
 
-    return post.dataValues;
+    return post;
 };
 
 const getPosts = async () => BlogPost.findAll({ 
@@ -30,7 +30,7 @@ const getPosts = async () => BlogPost.findAll({
       ],
     });
 
-const getPostById = async (id) => {
+const getPostById = async ({ id }) => {
     const post = await BlogPost.findOne({ 
       where: { id },
       attributes: { exclude: 'userId' },
@@ -45,8 +45,9 @@ const getPostById = async (id) => {
     return post;
 };
 
-const updatePost = async ({ id, title, content, decoded }) => {
+const updatePost = async ({ id, title, content, categoryIds, decoded }) => {
     if (decoded !== Number(id)) return 'Unauthorized user';
+    if (categoryIds) return 'Categories cannot be edited';
 
     await BlogPost.update({ title, content }, { where: { id } });
 
@@ -62,12 +63,10 @@ const updatePost = async ({ id, title, content, decoded }) => {
 const destroyPost = async ({ id, decoded }) => {
     const post = await BlogPost.findOne({ where: { id } });
 
-    if (!post) return 'Post does not exist';
+    if (!post) return null;
     if (decoded !== post.dataValues.userId) return 'Unauthorized user';
     
-    await BlogPost.destroy({ where: { id } });
-
-    return true;
+    return BlogPost.destroy({ where: { id } });
 };
 
 const getSearchTerm = async (q) => {

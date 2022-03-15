@@ -1,4 +1,4 @@
-const { Category } = require('../models');
+const Category = require('../services/category');
 
 const createTag = async (req, res, next) => {
   try {
@@ -6,7 +6,7 @@ const createTag = async (req, res, next) => {
 
     if (!name) return res.status(400).end();
 
-    const category = await Category.create({ name });
+    const category = await Category.createCategory(name);
 
     return res.status(201).json(category);
   } catch (error) {
@@ -14,9 +14,9 @@ const createTag = async (req, res, next) => {
   }
 };
 
-const getCategories = async (req, res, next) => {
+const getCategories = async (_req, res, next) => {
   try {
-    const tags = await Category.findAll();
+    const tags = await Category.getCategories();
 
     return res.status(200).json(tags);
   } catch (error) {

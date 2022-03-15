@@ -1,28 +1,20 @@
-const { User } = require('../models');
-const jwtGenerator = require('../helpers/jwtGenerator');
+const User = require('../services/user');
 
-// fonte base usado na função create: monitoria 24.5 com o Gaspar
-// https://github.dev/tryber/sd-015-b-live-lectures/tree/monitoria/24.5
 const create = async (req, res, next) => {
   try {
-    const { displayName, email, password, image } = req.body;
-    const existingEmail = await User.findOne({ where: { email } });
+    const user = await User.create(req.body);
 
-    if (existingEmail) return res.status(409).json({ message: 'User already registered' });
-    
-     const newUser = await User.create({ displayName, email, password, image });
+    if (!user) return res.status(409).json({ message: 'User already registered' });
 
-     const token = jwtGenerator({ id: newUser.id, displayName });
-
-     return res.status(201).json({ token });
+     return res.status(201).json(user);
   } catch (error) {
     next(error);
   }
 };
 
-const getAll = async (req, res, next) => {
+const getAll = async (_req, res, next) => {
   try {
-    const users = await User.findAll();
+    const users = await User.getAll();
 
     return res.status(200).json(users);
   } catch (error) {
@@ -32,9 +24,7 @@ const getAll = async (req, res, next) => {
 
 const getByUserId = async (req, res, next) => {
   try {
-    const { id } = req.params;
-
-    const user = await User.findOne({ where: { id } });
+    const user = await User.getByUserId(req.params);
 
     if (!user) {
       return res.status(404).json({ message: 'User does not exist' });
@@ -42,17 +32,13 @@ const getByUserId = async (req, res, next) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    if (error.message) {
-      error.status = 401;
-      error.message = 'Expired or invalid token';
-    }
     next(error);
   }
 };
 
 const destroyUser = async (req, res, next) => {
   try {
-    await User.destroy({ where: { id: req.decoded } });
+    await User.destroyUser({ id: req.decoded });
     
     return res.status(204).end();
   } catch (error) {
