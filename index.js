@@ -1,8 +1,8 @@
 const express = require('express');
 const { config } = require('dotenv');
 const bodyParser = require('body-parser');
-const routes = require('./routers');
-const middleware = require('./middlewares');
+const routes = require('./src/routers');
+const middleware = require('./src/middlewares');
 
 config();
 
